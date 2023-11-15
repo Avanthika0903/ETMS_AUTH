@@ -1,10 +1,12 @@
 package com.etms.worldline.security;
 
 import com.etms.worldline.model.User;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.lang.Long;
 
-@Component
+@ComponentScan
 public class UserPrincipal implements UserDetails {
 
     private Long user_id;

@@ -1,6 +1,8 @@
 package com.etms.worldline.model;
 
 import javax.persistence.*;
+
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long user_id;
 
     private String username;
