@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -43,6 +44,16 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles=new HashSet<>();
 
+    public User(String username, String email, String password, String last_name, String college_location, Date dob, String college_name, String gender) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.last_name = last_name;
+        this.gender = gender;
+        this.dob = dob;
+        this.college_location = college_location;
+        this.college_name = college_name;
+    }
 }

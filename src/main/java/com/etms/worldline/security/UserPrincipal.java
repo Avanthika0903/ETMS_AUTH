@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.lang.Long;
 
@@ -27,10 +24,10 @@ public class UserPrincipal implements UserDetails {
     private String college_name;
     private String college_location;
     private String password;
-    private List<GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities;
     public UserPrincipal(Long userId, String firstName, String lastName, String gender,
                          Date dob, String email, String collegeName, String collegeLocation,
-                         String password,List<GrantedAuthority> authorities) {
+                         String password,Collection<? extends GrantedAuthority> authorities) {
         this.user_id = userId;
         this.username = firstName;
         this.last_name = lastName;
@@ -45,7 +42,7 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
         return new UserPrincipal(
                 user.getUser_id(),
@@ -126,6 +123,16 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        UserPrincipal user = (UserPrincipal) o;
+        return Objects.equals(user_id, user.user_id);
     }
 
 }
