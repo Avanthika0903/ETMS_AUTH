@@ -6,8 +6,11 @@ import com.etms.worldline.model.ERole;
 import com.etms.worldline.model.Role;
 import com.etms.worldline.model.User;
 import com.etms.worldline.payload.request.SignupRequest;
+import com.etms.worldline.payload.response.JwtResponse;
+import com.etms.worldline.payload.response.MessageResponse;
 import com.etms.worldline.security.JwtTokenProvider;
 import com.etms.worldline.security.UserPrincipal;
+import io.jsonwebtoken.Jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,9 +48,9 @@ public class AuthController {
     private PasswordEncoder encoder;
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody SignupRequest signupRequest){
+    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest){
         if(userService.existsByUsername(signupRequest.getUsername())) {
-            return "User is already there!";
+            return ResponseEntity.ok(new MessageResponse("User is already there!"));
         }
         User reguser = new User(signupRequest.getUsername(),
                 signupRequest.getEmail(),
@@ -86,13 +89,19 @@ public class AuthController {
 
         reguser.setRoles(roles);
         userService.save(reguser);
-        return "User is successfully registered";
+        return ResponseEntity.ok(new MessageResponse("User is successfully registered"));
     }
     @PostMapping("/login")
-    public String authUser(@RequestBody User user){
+    public ResponseEntity<?> authUser(@RequestBody User user){
+        if(userService.existsByUsername(user.getUsername())){
         Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
     SecurityContextHolder.getContext().setAuthentication(authentication);
     String jwt=jwtTokenProvider.generateToken(authentication);
-    return jwt;
+        UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+    return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUserId(),userDetails.getUsername(),userDetails.getEmail(),true,roles,"User credentials is correct"));}
+        return ResponseEntity.ok(new JwtResponse("Username or password is wrong",false));
     }
 }
