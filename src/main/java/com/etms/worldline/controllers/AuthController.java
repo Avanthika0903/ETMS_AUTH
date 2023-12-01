@@ -104,4 +104,11 @@ public class AuthController {
     return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUserId(),userDetails.getUsername(),userDetails.getEmail(),true,roles,"User credentials is correct"));}
         return ResponseEntity.ok(new JwtResponse("Username or password is wrong",false));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+
+        return ResponseEntity.ok("{\"message\": \"Logged out successfully\"}");
+    }
 }
+
